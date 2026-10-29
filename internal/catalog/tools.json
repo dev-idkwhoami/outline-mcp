@@ -1,0 +1,3658 @@
+[
+  {
+    "name": "outline_collections_add_group",
+    "endpoint": "collections.add_group",
+    "category": "Collections",
+    "description": "Add a group to a collection. This method allows you to give all members in a group access to a collection.",
+    "readOnly": false,
+    "schema": {
+      "$defs": {
+        "Permission": {
+          "enum": [
+            "read",
+            "read_write"
+          ],
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "groupId": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "permission": {
+          "$ref": "#/$defs/Permission"
+        }
+      },
+      "required": [
+        "id",
+        "groupId"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_collections_add_user",
+    "endpoint": "collections.add_user",
+    "category": "Collections",
+    "description": "Add a collection user. This method allows you to add a user membership to the specified collection.",
+    "readOnly": false,
+    "schema": {
+      "$defs": {
+        "Permission": {
+          "enum": [
+            "read",
+            "read_write"
+          ],
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Identifier for the collection",
+          "format": "uuid",
+          "type": "string"
+        },
+        "permission": {
+          "$ref": "#/$defs/Permission"
+        },
+        "userId": {
+          "description": "Identifier for the user to add to the collection",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "userId"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_collections_archive",
+    "endpoint": "collections.archive",
+    "category": "Collections",
+    "description": "Archive a collection. Archiving a collection hides it, and all of the documents within it, from the sidebar and search results. Archived collections can be restored at a later date.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the collection.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "description": "An optional reason for archiving the collection. This is stored and returned as `deprecatedReason`.",
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_collections_create",
+    "endpoint": "collections.create",
+    "category": "Collections",
+    "description": "Create a collection. Create a new collection with the specified name, description, icon, color, and permission settings. Collections are used to organize documents.",
+    "readOnly": false,
+    "schema": {
+      "$defs": {
+        "Permission": {
+          "enum": [
+            "read",
+            "read_write"
+          ],
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "color": {
+          "description": "A hex color code for the collection icon",
+          "type": "string"
+        },
+        "data": {
+          "description": "The collection description as a rich-text ProseMirror JSON document. Only one of `description` or `data` may be provided.",
+          "type": "object"
+        },
+        "description": {
+          "description": "A brief description of the collection, markdown supported. Only one of `description` or `data` may be provided.",
+          "maxLength": 100000,
+          "type": "string"
+        },
+        "icon": {
+          "description": "A string that represents an icon in the outline-icons package or an emoji",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 100,
+          "type": "string"
+        },
+        "permission": {
+          "$ref": "#/$defs/Permission"
+        },
+        "sharing": {
+          "description": "Whether public sharing of documents is allowed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_collections_delete",
+    "endpoint": "collections.delete",
+    "category": "Collections",
+    "description": "Delete a collection. Delete a collection and all of its documents. This action can’t be undone so please be careful.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "description": "An optional reason for deleting the collection. This is stored and returned as `deprecatedReason`.",
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_collections_documents",
+    "endpoint": "collections.documents",
+    "category": "Collections",
+    "description": "Retrieve a collections document structure. Returns the document structure of a collection as a tree of navigation nodes, representing the hierarchy of documents within the collection.",
+    "readOnly": true,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the collection.",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_collections_duplicate",
+    "endpoint": "collections.duplicate",
+    "category": "Collections",
+    "description": "Duplicate a collection. Duplicate an existing collection along with its published documents. The original collection's settings – icon, color, permission, sharing, and sorting – are preserved on the copy. Draft and archived documents are not duplicated. Document duplication runs asynchronously in the background, so the copy may initially be returned before all of its documents have been created.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the collection to duplicate.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "name": {
+          "description": "An optional name for the new collection. If omitted, the original collection's name is reused.",
+          "maxLength": 100,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_collections_group_memberships",
+    "endpoint": "collections.group_memberships",
+    "category": "Collections",
+    "description": "List all collection group members. This method allows you to list a collections group memberships. This is the list of groups that have been given access to the collection.",
+    "readOnly": true,
+    "schema": {
+      "$defs": {
+        "Pagination": {
+          "properties": {
+            "limit": {
+              "type": "number"
+            },
+            "offset": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
+        "Permission": {
+          "enum": [
+            "read",
+            "read_write"
+          ],
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Identifier for the collection",
+          "format": "uuid",
+          "type": "string"
+        },
+        "limit": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "permission": {
+          "$ref": "#/$defs/Permission"
+        },
+        "query": {
+          "description": "Filter memberships by group names",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_collections_info",
+    "endpoint": "collections.info",
+    "category": "Collections",
+    "description": "Retrieve a collection. Retrieve the details of a collection by its unique identifier.",
+    "readOnly": true,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the collection.",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_collections_list",
+    "endpoint": "collections.list",
+    "category": "Collections",
+    "description": "List all collections. List all collections that the authenticated user has access to.",
+    "readOnly": true,
+    "schema": {
+      "$defs": {
+        "CollectionFilter": {
+          "description": "A single filter node for `/collections.list`, either a leaf condition matching a collection field or a group combining nested filters with a logical operator.",
+          "oneOf": [
+            {
+              "description": "A condition that compares a collection field against a value.",
+              "properties": {
+                "field": {
+                  "description": "Name of the collection field to filter on.",
+                  "enum": [
+                    "name",
+                    "createdAt",
+                    "updatedAt",
+                    "archivedAt",
+                    "createdById",
+                    "permission"
+                  ],
+                  "type": "string"
+                },
+                "operator": {
+                  "description": "Comparison operator to apply. Note that some fields only accept a subset of operators – for example `permission` only supports `eq`, `neq`, `in`, `notIn`, `isNull` and `isNotNull`.",
+                  "enum": [
+                    "eq",
+                    "neq",
+                    "lt",
+                    "lte",
+                    "gt",
+                    "gte",
+                    "contains",
+                    "startsWith",
+                    "endsWith",
+                    "containsStrict",
+                    "startsWithStrict",
+                    "endsWithStrict",
+                    "in",
+                    "notIn",
+                    "isNull",
+                    "isNotNull"
+                  ],
+                  "type": "string"
+                },
+                "value": {
+                  "description": "Value to compare against. May be a string, boolean or array of these depending on the field and operator. Date fields accept an ISO 8601 date or an ISO 8601 duration (relative to now). `permission` accepts a `Permission` enum value (or an array with `in`/`notIn`). Omit for `isNull` and `isNotNull`."
+                }
+              },
+              "required": [
+                "field",
+                "operator"
+              ],
+              "type": "object"
+            },
+            {
+              "description": "A logical group that combines nested filters with an `AND` or `OR` operator. Groups may themselves contain further groups.",
+              "properties": {
+                "filters": {
+                  "items": {
+                    "$ref": "#/$defs/CollectionFilter"
+                  },
+                  "type": "array"
+                },
+                "operator": {
+                  "enum": [
+                    "AND",
+                    "OR"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "operator",
+                "filters"
+              ],
+              "type": "object"
+            }
+          ]
+        },
+        "CollectionStatus": {
+          "enum": [
+            "archived"
+          ],
+          "type": "string"
+        },
+        "Pagination": {
+          "properties": {
+            "limit": {
+              "type": "number"
+            },
+            "offset": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
+        "Sorting": {
+          "properties": {
+            "direction": {
+              "enum": [
+                "ASC",
+                "DESC"
+              ],
+              "type": "string"
+            },
+            "sort": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "direction": {
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "type": "string"
+        },
+        "filters": {
+          "description": "Structured filter expression, evaluated as an AND of top-level entries. Cannot be combined with the deprecated `query` or `statusFilter` parameters.",
+          "items": {
+            "$ref": "#/$defs/CollectionFilter"
+          },
+          "type": "array"
+        },
+        "limit": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "query": {
+          "deprecated": true,
+          "description": "If set, will filter the results by collection name. Deprecated – prefer the `filters` parameter.",
+          "type": "string"
+        },
+        "sort": {
+          "type": "string"
+        },
+        "statusFilter": {
+          "deprecated": true,
+          "description": "An optional array of statuses to filter by. Deprecated – prefer the `filters` parameter.",
+          "items": {
+            "$ref": "#/$defs/CollectionStatus"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_collections_memberships",
+    "endpoint": "collections.memberships",
+    "category": "Collections",
+    "description": "List all collection memberships. This method allows you to list a collections individual memberships. It's important to note that memberships returned from this endpoint do not include group memberships.",
+    "readOnly": true,
+    "schema": {
+      "$defs": {
+        "Pagination": {
+          "properties": {
+            "limit": {
+              "type": "number"
+            },
+            "offset": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
+        "Permission": {
+          "enum": [
+            "read",
+            "read_write"
+          ],
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Identifier for the collection",
+          "format": "uuid",
+          "type": "string"
+        },
+        "limit": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "permission": {
+          "$ref": "#/$defs/Permission"
+        },
+        "query": {
+          "description": "Filter memberships by user names",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_collections_move",
+    "endpoint": "collections.move",
+    "category": "Collections",
+    "description": "Move a collection. Move a collection to a new position in the sidebar. Collections are ordered using a fractional index; provide the new index to reposition the collection relative to its siblings.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the collection.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "index": {
+          "description": "The fractional index to move the collection to, used for ordering in the sidebar.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "index"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_collections_remove_group",
+    "endpoint": "collections.remove_group",
+    "category": "Collections",
+    "description": "Remove a collection group. This method allows you to revoke all members in a group access to a collection. Note that members of the group may still retain access through other groups or individual memberships.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "groupId": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "id": {
+          "description": "Identifier for the collection",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "groupId"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_collections_remove_user",
+    "endpoint": "collections.remove_user",
+    "category": "Collections",
+    "description": "Remove a collection user. This method allows you to remove a user from the specified collection.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Identifier for the collection",
+          "format": "uuid",
+          "type": "string"
+        },
+        "userId": {
+          "description": "Identifier for the user to remove from the collection",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "userId"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_collections_restore",
+    "endpoint": "collections.restore",
+    "category": "Collections",
+    "description": "Restore an archived collection. Restore a previously archived collection, making it and the documents within it visible in the sidebar and search results once again.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the collection.",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_collections_update",
+    "endpoint": "collections.update",
+    "category": "Collections",
+    "description": "Update a collection. Update an existing collection's properties such as name, description, icon, color, sharing settings, or permission level.",
+    "readOnly": false,
+    "schema": {
+      "$defs": {
+        "Permission": {
+          "enum": [
+            "read",
+            "read_write"
+          ],
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "color": {
+          "description": "A hex color code for the collection icon",
+          "type": "string"
+        },
+        "data": {
+          "description": "The collection description as a rich-text ProseMirror JSON document. Only one of `description` or `data` may be provided.",
+          "type": "object"
+        },
+        "deprecatedReason": {
+          "anyOf": [
+            {
+              "description": "The reason the collection was archived. Can only be updated on an archived collection.",
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "description": {
+          "description": "A brief description of the collection, markdown supported. Only one of `description` or `data` may be provided.",
+          "maxLength": 100000,
+          "type": "string"
+        },
+        "icon": {
+          "description": "A string that represents an icon in the outline-icons package or an emoji",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 100,
+          "type": "string"
+        },
+        "permission": {
+          "$ref": "#/$defs/Permission"
+        },
+        "sharing": {
+          "description": "Whether public sharing of documents is allowed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_comments_add_reaction",
+    "endpoint": "comments.add_reaction",
+    "category": "Comments",
+    "description": "Add a reaction to a comment. Add an emoji reaction to a comment on behalf of the authenticated user.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "emoji": {
+          "description": "A native emoji to react with, for example `😄`.",
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique identifier for the comment.",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "emoji"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_comments_create",
+    "endpoint": "comments.create",
+    "category": "Comments",
+    "description": "Create a comment. Add a comment or reply to a document, either `data` or `text` is required. Provide `anchorText` to create an inline comment attached to a specific text range in the document.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "anchorPrefix": {
+          "description": "Text immediately preceding `anchorText`, used to disambiguate between multiple occurrences. Requires `anchorText`.",
+          "type": "string"
+        },
+        "anchorSuffix": {
+          "description": "Text immediately following `anchorText`, used to disambiguate between multiple occurrences. Requires `anchorText`.",
+          "type": "string"
+        },
+        "anchorText": {
+          "description": "Plain text substring to anchor the comment to as an inline comment. The first occurrence in the document's plain text is used unless disambiguated by `anchorPrefix` and/or `anchorSuffix`.",
+          "type": "string"
+        },
+        "data": {
+          "description": "The body of the comment.",
+          "type": "object"
+        },
+        "documentId": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "parentCommentId": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "text": {
+          "description": "The body of the comment in markdown.",
+          "maxLength": 10000,
+          "type": "string"
+        }
+      },
+      "required": [
+        "documentId"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_comments_delete",
+    "endpoint": "comments.delete",
+    "category": "Comments",
+    "description": "Delete a comment. Deletes a comment. If the comment is a top-level comment, all its children will be deleted as well.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_comments_info",
+    "endpoint": "comments.info",
+    "category": "Comments",
+    "description": "Retrieve a comment. Retrieve a comment",
+    "readOnly": true,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "includeAnchorText": {
+          "description": "Include the document text that the comment is anchored to, if any, in the response.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_comments_list",
+    "endpoint": "comments.list",
+    "category": "Comments",
+    "description": "List all comments. This method will list all comments matching the given properties.",
+    "readOnly": true,
+    "schema": {
+      "$defs": {
+        "Pagination": {
+          "properties": {
+            "limit": {
+              "type": "number"
+            },
+            "offset": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
+        "Sorting": {
+          "properties": {
+            "direction": {
+              "enum": [
+                "ASC",
+                "DESC"
+              ],
+              "type": "string"
+            },
+            "sort": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "collectionId": {
+          "description": "Filter to a specific collection",
+          "format": "uuid",
+          "type": "string"
+        },
+        "direction": {
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "type": "string"
+        },
+        "documentId": {
+          "description": "Filter to a specific document",
+          "format": "uuid",
+          "type": "string"
+        },
+        "includeAnchorText": {
+          "description": "Include the document text that the comment is anchored to, if any, in the response.",
+          "type": "boolean"
+        },
+        "limit": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "sort": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_comments_remove_reaction",
+    "endpoint": "comments.remove_reaction",
+    "category": "Comments",
+    "description": "Remove a reaction from a comment. Remove an emoji reaction that the authenticated user previously added to a comment.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "emoji": {
+          "description": "The native emoji reaction to remove, for example `😄`.",
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique identifier for the comment.",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "emoji"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_comments_resolve",
+    "endpoint": "comments.resolve",
+    "category": "Comments",
+    "description": "Resolve a comment. Mark a comment thread as resolved. Resolved comments are hidden from the document by default and indicate that the discussion has been dealt with.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the comment.",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_comments_unresolve",
+    "endpoint": "comments.unresolve",
+    "category": "Comments",
+    "description": "Unresolve a comment. Mark a previously resolved comment thread as unresolved, making it visible on the document again.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the comment.",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_comments_update",
+    "endpoint": "comments.update",
+    "category": "Comments",
+    "description": "Update a comment. Update a comment, either `data` or `text` is required.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "data": {
+          "description": "The body of the comment.",
+          "type": "object"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "text": {
+          "description": "The body of the comment in markdown.",
+          "maxLength": 10000,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_data_attributes_create",
+    "endpoint": "dataAttributes.create",
+    "category": "DataAttributes",
+    "description": "Create a data attribute. Create a new data attribute. Only admins can create data attributes.",
+    "readOnly": false,
+    "schema": {
+      "$defs": {
+        "DataAttributeDataType": {
+          "description": "The data type of the attribute value.",
+          "enum": [
+            "string",
+            "number",
+            "boolean",
+            "list"
+          ],
+          "type": "string"
+        },
+        "DataAttributeOptions": {
+          "description": "Additional options for certain data attribute types.",
+          "properties": {
+            "icon": {
+              "description": "An icon representing the data attribute from the outline-icons package.",
+              "type": "string"
+            },
+            "options": {
+              "description": "Valid options for list data type.",
+              "items": {
+                "properties": {
+                  "color": {
+                    "description": "Optional color for the option.",
+                    "type": "string"
+                  },
+                  "value": {
+                    "description": "The label/value of the option.",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "dataType": {
+          "$ref": "#/$defs/DataAttributeDataType"
+        },
+        "description": {
+          "description": "Description of the data attribute.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Name of the data attribute.",
+          "type": "string"
+        },
+        "options": {
+          "$ref": "#/$defs/DataAttributeOptions"
+        },
+        "pinned": {
+          "default": false,
+          "description": "Whether the data attribute is pinned to the top of document.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "dataType"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_data_attributes_delete",
+    "endpoint": "dataAttributes.delete",
+    "category": "DataAttributes",
+    "description": "Delete a data attribute. Delete a data attribute. Only admins can delete data attributes.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the data attribute.",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_data_attributes_info",
+    "endpoint": "dataAttributes.info",
+    "category": "DataAttributes",
+    "description": "Retrieve a data attribute. Retrieve a data attribute by its unique identifier.",
+    "readOnly": true,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the data attribute.",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_data_attributes_list",
+    "endpoint": "dataAttributes.list",
+    "category": "DataAttributes",
+    "description": "List all data attributes. List all data attributes.",
+    "readOnly": true,
+    "schema": {
+      "$defs": {
+        "Pagination": {
+          "properties": {
+            "limit": {
+              "type": "number"
+            },
+            "offset": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
+        "Sorting": {
+          "properties": {
+            "direction": {
+              "enum": [
+                "ASC",
+                "DESC"
+              ],
+              "type": "string"
+            },
+            "sort": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "direction": {
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "type": "string"
+        },
+        "limit": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "sort": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_data_attributes_update",
+    "endpoint": "dataAttributes.update",
+    "category": "DataAttributes",
+    "description": "Update a data attribute. Update an existing data attribute. Only admins can update data attributes. Note that the dataType cannot be changed after creation.",
+    "readOnly": false,
+    "schema": {
+      "$defs": {
+        "DataAttributeOptions": {
+          "description": "Additional options for certain data attribute types.",
+          "properties": {
+            "icon": {
+              "description": "An icon representing the data attribute from the outline-icons package.",
+              "type": "string"
+            },
+            "options": {
+              "description": "Valid options for list data type.",
+              "items": {
+                "properties": {
+                  "color": {
+                    "description": "Optional color for the option.",
+                    "type": "string"
+                  },
+                  "value": {
+                    "description": "The label/value of the option.",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "description": "Description of the data attribute.",
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique identifier for the data attribute.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "name": {
+          "description": "Name of the data attribute.",
+          "type": "string"
+        },
+        "options": {
+          "$ref": "#/$defs/DataAttributeOptions"
+        },
+        "pinned": {
+          "description": "Whether the data attribute is pinned to the top of document.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_add_group",
+    "endpoint": "documents.add_group",
+    "category": "Documents",
+    "description": "Add a group to a document. This method allows you to give all members in a group access to a document.",
+    "readOnly": false,
+    "schema": {
+      "$defs": {
+        "Permission": {
+          "enum": [
+            "read",
+            "read_write"
+          ],
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "groupId": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique identifier for the document. Either the UUID or the urlId is acceptable.",
+          "type": "string"
+        },
+        "permission": {
+          "$ref": "#/$defs/Permission"
+        }
+      },
+      "required": [
+        "id",
+        "groupId"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_add_user",
+    "endpoint": "documents.add_user",
+    "category": "Documents",
+    "description": "Add a document user. This method allows you to add a user membership to the specified document.",
+    "readOnly": false,
+    "schema": {
+      "$defs": {
+        "Permission": {
+          "enum": [
+            "read",
+            "read_write"
+          ],
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the document. Either the UUID or the urlId is acceptable.",
+          "type": "string"
+        },
+        "permission": {
+          "$ref": "#/$defs/Permission"
+        },
+        "userId": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "userId"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_answer_question",
+    "endpoint": "documents.answerQuestion",
+    "category": "Documents",
+    "description": "Query documents with natural language. This method allows asking direct questions of your documents – where possible an answer will be provided. Search results will be restricted to those accessible by the current access token. Note that \"AI answers\" must be enabled for the workspace.",
+    "readOnly": true,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "collectionId": {
+          "description": "A collection to search within",
+          "format": "uuid",
+          "type": "string"
+        },
+        "dateFilter": {
+          "description": "Any documents that have not been updated within the specified period will be filtered out",
+          "enum": [
+            "day",
+            "week",
+            "month",
+            "year"
+          ],
+          "type": "string"
+        },
+        "documentId": {
+          "description": "A document to search within",
+          "format": "uuid",
+          "type": "string"
+        },
+        "query": {
+          "type": "string"
+        },
+        "statusFilter": {
+          "description": "Any documents that are not in the specified status will be filtered out",
+          "enum": [
+            "draft",
+            "archived",
+            "published"
+          ],
+          "type": "string"
+        },
+        "userId": {
+          "description": "Any documents that have not been edited by the user identifier will be filtered out",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_archive",
+    "endpoint": "documents.archive",
+    "category": "Documents",
+    "description": "Archive a document. Archiving a document allows outdated information to be moved out of sight whilst retaining the ability to optionally search and restore it later.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the document. Either the UUID or the urlId is acceptable.",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "description": "An optional reason for archiving the document. This is stored and returned as `deprecatedReason`.",
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_archived",
+    "endpoint": "documents.archived",
+    "category": "Documents",
+    "description": "List all archived documents. This method will list all archived documents belonging to the workspace that the current user has access to.",
+    "readOnly": true,
+    "schema": {
+      "$defs": {
+        "Pagination": {
+          "properties": {
+            "limit": {
+              "type": "number"
+            },
+            "offset": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
+        "Sorting": {
+          "properties": {
+            "direction": {
+              "enum": [
+                "ASC",
+                "DESC"
+              ],
+              "type": "string"
+            },
+            "sort": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "collectionId": {
+          "description": "Optionally filter to a specific collection",
+          "format": "uuid",
+          "type": "string"
+        },
+        "direction": {
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "type": "string"
+        },
+        "limit": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "sort": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_create",
+    "endpoint": "documents.create",
+    "category": "Documents",
+    "description": "Create a document. This method allows you to create or publish a new document. By default a document is set to the collection root. If you want to create a nested/child document, you should pass parentDocumentId to set the parent document.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "collectionId": {
+          "anyOf": [
+            {
+              "description": "Identifier for the collection. Required to publish unless parentDocumentId is provided. Pass the literal string `personal` to create the document in the authenticated user's personal collection.",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "color": {
+          "anyOf": [
+            {
+              "description": "Color for the document icon (hex format)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "createdAt": {
+          "description": "Optionally set the created date in the past",
+          "format": "date-time",
+          "type": "string"
+        },
+        "dataAttributes": {
+          "description": "Data attributes to be included on the document.",
+          "items": {
+            "properties": {
+              "dataAttributeId": {
+                "description": "Unique identifier for the data attribute.",
+                "format": "uuid",
+                "type": "string"
+              },
+              "value": {
+                "description": "The value of the data attribute. Can be a string, boolean, or number depending on the data attribute type.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "dataAttributeId",
+              "value"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "fullWidth": {
+          "description": "Whether the document should be displayed in full width",
+          "type": "boolean"
+        },
+        "icon": {
+          "description": "Icon displayed alongside the document title",
+          "type": "string"
+        },
+        "id": {
+          "description": "Optional identifier for the document",
+          "format": "uuid",
+          "type": "string"
+        },
+        "parentDocumentId": {
+          "anyOf": [
+            {
+              "description": "Identifier for the parent document. Required to publish unless collectionId is provided",
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "preferences": {
+          "anyOf": [
+            {
+              "description": "Document-level display preferences. Only the fields supplied are updated; existing values for other preferences are preserved. Pass `null` to clear all preferences.",
+              "properties": {
+                "headingPrefix": {
+                  "description": "Numbering style applied to the document's headings when rendered.",
+                  "enum": [
+                    "none",
+                    "numeric",
+                    "alphanumeric",
+                    "outline"
+                  ],
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "publish": {
+          "description": "Whether this document should be immediately published and made visible to other workspace members.",
+          "type": "boolean"
+        },
+        "templateId": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "text": {
+          "description": "The body of the document in markdown",
+          "maxLength": 1536000,
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 100,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_delete",
+    "endpoint": "documents.delete",
+    "category": "Documents",
+    "description": "Delete a document. Deleting a document moves it to the trash. If not restored within 30 days it is permanently deleted.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the document. Either the UUID or the urlId is acceptable.",
+          "type": "string"
+        },
+        "permanent": {
+          "description": "If set to true the document will be destroyed with no way to recover rather than moved to the trash.",
+          "type": "boolean"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "description": "An optional reason for deleting the document. This is stored and returned as `deprecatedReason`.",
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_deleted",
+    "endpoint": "documents.deleted",
+    "category": "Documents",
+    "description": "List all deleted documents. This method will list all deleted documents belonging to the workspace that the current user has access to.",
+    "readOnly": true,
+    "schema": {
+      "$defs": {
+        "DocumentsDeletedFilter": {
+          "description": "A single filter node for `/documents.deleted`, either a leaf condition matching a supported field or a group combining nested filters with a logical operator.",
+          "oneOf": [
+            {
+              "description": "A condition that compares a deleted-document field against a value.",
+              "properties": {
+                "field": {
+                  "description": "Name of the field to filter on.",
+                  "enum": [
+                    "deletedAt",
+                    "deletedById"
+                  ],
+                  "type": "string"
+                },
+                "operator": {
+                  "description": "Comparison operator to apply. `deletedById` only supports `eq` and `in`.",
+                  "enum": [
+                    "eq",
+                    "neq",
+                    "lt",
+                    "lte",
+                    "gt",
+                    "gte",
+                    "in",
+                    "notIn",
+                    "isNull",
+                    "isNotNull"
+                  ],
+                  "type": "string"
+                },
+                "value": {
+                  "description": "Value to compare against. `deletedAt` accepts an ISO 8601 date or an ISO 8601 duration (relative to now); `deletedById` accepts a user UUID (or an array of UUIDs with `in`/`notIn`). Omit for `isNull` and `isNotNull`."
+                }
+              },
+              "required": [
+                "field",
+                "operator"
+              ],
+              "type": "object"
+            },
+            {
+              "description": "A logical group that combines nested filters with an `AND` or `OR` operator. Groups may themselves contain further groups.",
+              "properties": {
+                "filters": {
+                  "items": {
+                    "$ref": "#/$defs/DocumentsDeletedFilter"
+                  },
+                  "type": "array"
+                },
+                "operator": {
+                  "enum": [
+                    "AND",
+                    "OR"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "operator",
+                "filters"
+              ],
+              "type": "object"
+            }
+          ]
+        },
+        "Pagination": {
+          "properties": {
+            "limit": {
+              "type": "number"
+            },
+            "offset": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
+        "Sorting": {
+          "properties": {
+            "direction": {
+              "enum": [
+                "ASC",
+                "DESC"
+              ],
+              "type": "string"
+            },
+            "sort": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "direction": {
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "type": "string"
+        },
+        "filters": {
+          "description": "Structured filter expression, evaluated as an AND of top-level entries. Supported fields are `deletedAt` (date) and `deletedById` (uuid, identifier of the user who deleted the document).",
+          "items": {
+            "$ref": "#/$defs/DocumentsDeletedFilter"
+          },
+          "type": "array"
+        },
+        "limit": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "sort": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_documents",
+    "endpoint": "documents.documents",
+    "category": "Documents",
+    "description": "Retrieve a document's child structure. This method returns the nested document structure (tree) for the children of the specified document.",
+    "readOnly": true,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the document. Either the UUID or the urlId is acceptable.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_drafts",
+    "endpoint": "documents.drafts",
+    "category": "Documents",
+    "description": "List all draft documents. This method will list all draft documents belonging to the current user.",
+    "readOnly": true,
+    "schema": {
+      "$defs": {
+        "Pagination": {
+          "properties": {
+            "limit": {
+              "type": "number"
+            },
+            "offset": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
+        "Sorting": {
+          "properties": {
+            "direction": {
+              "enum": [
+                "ASC",
+                "DESC"
+              ],
+              "type": "string"
+            },
+            "sort": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "collectionId": {
+          "description": "A collection to search within",
+          "format": "uuid",
+          "type": "string"
+        },
+        "dateFilter": {
+          "description": "Any documents that have not been updated within the specified period will be filtered out",
+          "enum": [
+            "day",
+            "week",
+            "month",
+            "year"
+          ],
+          "type": "string"
+        },
+        "direction": {
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "type": "string"
+        },
+        "limit": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "sort": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_duplicate",
+    "endpoint": "documents.duplicate",
+    "category": "Documents",
+    "description": "Duplicate a document. This method allows you to duplicate an existing document and optionally all of its child documents.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "collectionId": {
+          "description": "Identifier for the collection the document should be copied to",
+          "format": "uuid",
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique identifier for the document. Either the UUID or the urlId is acceptable.",
+          "type": "string"
+        },
+        "parentDocumentId": {
+          "description": "Identifier for the parent document the document should be copied to",
+          "format": "uuid",
+          "type": "string"
+        },
+        "publish": {
+          "description": "Whether the new document should be published",
+          "type": "boolean"
+        },
+        "recursive": {
+          "description": "Whether child documents should also be duplicated",
+          "type": "boolean"
+        },
+        "title": {
+          "description": "New title for the duplicated document",
+          "maxLength": 100,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_group_memberships",
+    "endpoint": "documents.group_memberships",
+    "category": "Documents",
+    "description": "List document group memberships. This method allows you to list a document's group memberships.",
+    "readOnly": true,
+    "schema": {
+      "$defs": {
+        "Pagination": {
+          "properties": {
+            "limit": {
+              "type": "number"
+            },
+            "offset": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
+        "Permission": {
+          "enum": [
+            "read",
+            "read_write"
+          ],
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the document. Either the UUID or the urlId is acceptable.",
+          "type": "string"
+        },
+        "limit": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "permission": {
+          "$ref": "#/$defs/Permission"
+        },
+        "query": {
+          "description": "Filter memberships by group names",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_info",
+    "endpoint": "documents.info",
+    "category": "Documents",
+    "description": "Retrieve a document. Retrieve a document by its `UUID`, `urlId`, or `shareId`. At least one of these parameters must be provided.",
+    "readOnly": true,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the document. Either the UUID or the urlId is acceptable.",
+          "type": "string"
+        },
+        "shareId": {
+          "description": "Unique identifier for a document share, a shareId may be used in place of a document UUID",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_insights",
+    "endpoint": "documents.insights",
+    "category": "Documents",
+    "description": "Retrieve insights for a document. Retrieve a chronologically sorted array of activity rollups (views, comments, reactions, revisions, editors) for a document. Recent activity is returned as daily rollups, while older activity is aggregated into weekly rollups. Insights must be enabled on the document. Defaults to the last 30 days when no date range is provided.",
+    "readOnly": true,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "endDate": {
+          "description": "End of the insights window (inclusive). Defaults to today.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique identifier for the document.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "startDate": {
+          "description": "Start of the insights window (inclusive). Defaults to 30 days ago.",
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_list",
+    "endpoint": "documents.list",
+    "category": "Documents",
+    "description": "List all documents. This method will list all published documents and draft documents belonging to the current user.",
+    "readOnly": true,
+    "schema": {
+      "$defs": {
+        "DocumentFilter": {
+          "description": "A single filter node, either a leaf condition matching a document field or a group combining nested filters with a logical operator.",
+          "oneOf": [
+            {
+              "description": "A condition that compares a document field against a value.",
+              "properties": {
+                "field": {
+                  "description": "Name of the document field to filter on.",
+                  "enum": [
+                    "createdAt",
+                    "updatedAt",
+                    "publishedAt",
+                    "archivedAt",
+                    "title",
+                    "templateId",
+                    "collectionId",
+                    "createdById",
+                    "userId",
+                    "documentId",
+                    "parentDocumentId"
+                  ],
+                  "type": "string"
+                },
+                "operator": {
+                  "description": "Comparison operator to apply. Note that some fields only accept a subset of operators – for example `createdById`, `userId` and `documentId` only support `eq` and `in`.",
+                  "enum": [
+                    "eq",
+                    "neq",
+                    "lt",
+                    "lte",
+                    "gt",
+                    "gte",
+                    "contains",
+                    "startsWith",
+                    "endsWith",
+                    "containsStrict",
+                    "startsWithStrict",
+                    "endsWithStrict",
+                    "in",
+                    "notIn",
+                    "isNull",
+                    "isNotNull"
+                  ],
+                  "type": "string"
+                },
+                "value": {
+                  "description": "Value to compare against. May be a string, number, boolean or array of these depending on the field and operator. Date fields accept an ISO 8601 date or an ISO 8601 duration (relative to now). Omit for `isNull` and `isNotNull`."
+                }
+              },
+              "required": [
+                "field",
+                "operator"
+              ],
+              "type": "object"
+            },
+            {
+              "description": "A logical group that combines nested filters with an `AND` or `OR` operator. Groups may themselves contain further groups.",
+              "properties": {
+                "filters": {
+                  "items": {
+                    "$ref": "#/$defs/DocumentFilter"
+                  },
+                  "type": "array"
+                },
+                "operator": {
+                  "enum": [
+                    "AND",
+                    "OR"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "operator",
+                "filters"
+              ],
+              "type": "object"
+            }
+          ]
+        },
+        "Pagination": {
+          "properties": {
+            "limit": {
+              "type": "number"
+            },
+            "offset": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
+        "Sorting": {
+          "properties": {
+            "direction": {
+              "enum": [
+                "ASC",
+                "DESC"
+              ],
+              "type": "string"
+            },
+            "sort": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "backlinkDocumentId": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "collectionId": {
+          "deprecated": true,
+          "description": "Optionally filter to a specific collection. Deprecated – prefer the `filters` parameter.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "direction": {
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "type": "string"
+        },
+        "filters": {
+          "description": "Structured filter expression, evaluated as an AND of top-level entries. Cannot be combined with the deprecated `collectionId`, `userId`, `parentDocumentId` or `statusFilter` parameters.",
+          "items": {
+            "$ref": "#/$defs/DocumentFilter"
+          },
+          "type": "array"
+        },
+        "limit": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "parentDocumentId": {
+          "deprecated": true,
+          "description": "Optionally filter to child documents of a specific parent. Deprecated – prefer the `filters` parameter.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "sort": {
+          "type": "string"
+        },
+        "statusFilter": {
+          "deprecated": true,
+          "description": "Document statuses to include in results. Deprecated – prefer the `filters` parameter.",
+          "items": {
+            "enum": [
+              "draft",
+              "archived",
+              "published"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "userId": {
+          "deprecated": true,
+          "description": "Optionally filter to documents created by a specific user. Deprecated – prefer the `filters` parameter.",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_memberships",
+    "endpoint": "documents.memberships",
+    "category": "Documents",
+    "description": "List document memberships. Users with direct membership to a document. To list all users with access to a document use `documents.users`.",
+    "readOnly": true,
+    "schema": {
+      "$defs": {
+        "Permission": {
+          "enum": [
+            "read",
+            "read_write"
+          ],
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the document. Either the UUID or the urlId is acceptable.",
+          "type": "string"
+        },
+        "permission": {
+          "$ref": "#/$defs/Permission"
+        },
+        "query": {
+          "description": "If set, will filter the results by user name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_move",
+    "endpoint": "documents.move",
+    "category": "Documents",
+    "description": "Move a document. Move a document to a new location or collection. If no parent document is provided, the document will be moved to the collection root.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "collectionId": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique identifier for the document. Either the UUID or the urlId is acceptable.",
+          "type": "string"
+        },
+        "index": {
+          "description": "The position index in the collection structure",
+          "type": "number"
+        },
+        "parentDocumentId": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_remove_group",
+    "endpoint": "documents.remove_group",
+    "category": "Documents",
+    "description": "Remove a group from a document. This method allows you to revoke all members in a group access to a document.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "groupId": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique identifier for the document. Either the UUID or the urlId is acceptable.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "groupId"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_remove_user",
+    "endpoint": "documents.remove_user",
+    "category": "Documents",
+    "description": "Remove a document user. This method allows you to remove a user membership from the specified document.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the document. Either the UUID or the urlId is acceptable.",
+          "type": "string"
+        },
+        "userId": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "userId"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_restore",
+    "endpoint": "documents.restore",
+    "category": "Documents",
+    "description": "Restore a document. If a document has been archived or deleted, it can be restored. Optionally a revision can be passed to restore the document to a previous point in time.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "collectionId": {
+          "description": "Identifier for the collection to restore the document to.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique identifier for the document. Either the UUID or the urlId is acceptable.",
+          "type": "string"
+        },
+        "revisionId": {
+          "description": "Identifier for the revision to restore to.",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_search",
+    "endpoint": "documents.search",
+    "category": "Documents",
+    "description": "Search all documents. This methods allows you to search your workspace's documents with keywords. Note that search results will be restricted to those accessible by the current access token.",
+    "readOnly": true,
+    "schema": {
+      "$defs": {
+        "DocumentFilter": {
+          "description": "A single filter node, either a leaf condition matching a document field or a group combining nested filters with a logical operator.",
+          "oneOf": [
+            {
+              "description": "A condition that compares a document field against a value.",
+              "properties": {
+                "field": {
+                  "description": "Name of the document field to filter on.",
+                  "enum": [
+                    "createdAt",
+                    "updatedAt",
+                    "publishedAt",
+                    "archivedAt",
+                    "title",
+                    "templateId",
+                    "collectionId",
+                    "createdById",
+                    "userId",
+                    "documentId",
+                    "parentDocumentId"
+                  ],
+                  "type": "string"
+                },
+                "operator": {
+                  "description": "Comparison operator to apply. Note that some fields only accept a subset of operators – for example `createdById`, `userId` and `documentId` only support `eq` and `in`.",
+                  "enum": [
+                    "eq",
+                    "neq",
+                    "lt",
+                    "lte",
+                    "gt",
+                    "gte",
+                    "contains",
+                    "startsWith",
+                    "endsWith",
+                    "containsStrict",
+                    "startsWithStrict",
+                    "endsWithStrict",
+                    "in",
+                    "notIn",
+                    "isNull",
+                    "isNotNull"
+                  ],
+                  "type": "string"
+                },
+                "value": {
+                  "description": "Value to compare against. May be a string, number, boolean or array of these depending on the field and operator. Date fields accept an ISO 8601 date or an ISO 8601 duration (relative to now). Omit for `isNull` and `isNotNull`."
+                }
+              },
+              "required": [
+                "field",
+                "operator"
+              ],
+              "type": "object"
+            },
+            {
+              "description": "A logical group that combines nested filters with an `AND` or `OR` operator. Groups may themselves contain further groups.",
+              "properties": {
+                "filters": {
+                  "items": {
+                    "$ref": "#/$defs/DocumentFilter"
+                  },
+                  "type": "array"
+                },
+                "operator": {
+                  "enum": [
+                    "AND",
+                    "OR"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "operator",
+                "filters"
+              ],
+              "type": "object"
+            }
+          ]
+        },
+        "Pagination": {
+          "properties": {
+            "limit": {
+              "type": "number"
+            },
+            "offset": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "collectionId": {
+          "deprecated": true,
+          "description": "A collection to search within. Deprecated – prefer the `filters` parameter.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "dateFilter": {
+          "deprecated": true,
+          "description": "Any documents that have not been updated within the specified period will be filtered out. Deprecated – prefer the `filters` parameter with a date field and an ISO 8601 duration value.",
+          "enum": [
+            "day",
+            "week",
+            "month",
+            "year"
+          ],
+          "type": "string"
+        },
+        "direction": {
+          "description": "Specifies the sort order with respect to sort field",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "type": "string"
+        },
+        "documentId": {
+          "deprecated": true,
+          "description": "A document to search within. Deprecated – prefer the `filters` parameter.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "filters": {
+          "description": "Structured filter expression, evaluated as an AND of top-level entries. Cannot be combined with the deprecated `collectionId`, `userId`, `documentId`, `dateFilter` or `statusFilter` parameters.",
+          "items": {
+            "$ref": "#/$defs/DocumentFilter"
+          },
+          "type": "array"
+        },
+        "limit": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "query": {
+          "type": "string"
+        },
+        "shareId": {
+          "description": "Filter results to the collection or document referenced by the shareId",
+          "type": "string"
+        },
+        "snippetMaxWords": {
+          "default": 30,
+          "description": "Maximum number of words to show in search result snippets",
+          "type": "number"
+        },
+        "snippetMinWords": {
+          "default": 20,
+          "description": "Minimum number of words to show in search result snippets",
+          "type": "number"
+        },
+        "sort": {
+          "description": "Specifies the attributes by which search results will be sorted",
+          "enum": [
+            "relevance",
+            "createdAt",
+            "updatedAt",
+            "title"
+          ],
+          "type": "string"
+        },
+        "statusFilter": {
+          "deprecated": true,
+          "description": "Document statuses to include in results. Deprecated – prefer the `filters` parameter.",
+          "items": {
+            "enum": [
+              "draft",
+              "archived",
+              "published"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "userId": {
+          "deprecated": true,
+          "description": "Any documents that have not been edited by the user identifier will be filtered out. Deprecated – prefer the `filters` parameter.",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_search_titles",
+    "endpoint": "documents.search_titles",
+    "category": "Documents",
+    "description": "Search document titles. This method allows you to search document titles with keywords. Unlike documents.search, this only searches titles and returns faster results.",
+    "readOnly": true,
+    "schema": {
+      "$defs": {
+        "DocumentFilter": {
+          "description": "A single filter node, either a leaf condition matching a document field or a group combining nested filters with a logical operator.",
+          "oneOf": [
+            {
+              "description": "A condition that compares a document field against a value.",
+              "properties": {
+                "field": {
+                  "description": "Name of the document field to filter on.",
+                  "enum": [
+                    "createdAt",
+                    "updatedAt",
+                    "publishedAt",
+                    "archivedAt",
+                    "title",
+                    "templateId",
+                    "collectionId",
+                    "createdById",
+                    "userId",
+                    "documentId",
+                    "parentDocumentId"
+                  ],
+                  "type": "string"
+                },
+                "operator": {
+                  "description": "Comparison operator to apply. Note that some fields only accept a subset of operators – for example `createdById`, `userId` and `documentId` only support `eq` and `in`.",
+                  "enum": [
+                    "eq",
+                    "neq",
+                    "lt",
+                    "lte",
+                    "gt",
+                    "gte",
+                    "contains",
+                    "startsWith",
+                    "endsWith",
+                    "containsStrict",
+                    "startsWithStrict",
+                    "endsWithStrict",
+                    "in",
+                    "notIn",
+                    "isNull",
+                    "isNotNull"
+                  ],
+                  "type": "string"
+                },
+                "value": {
+                  "description": "Value to compare against. May be a string, number, boolean or array of these depending on the field and operator. Date fields accept an ISO 8601 date or an ISO 8601 duration (relative to now). Omit for `isNull` and `isNotNull`."
+                }
+              },
+              "required": [
+                "field",
+                "operator"
+              ],
+              "type": "object"
+            },
+            {
+              "description": "A logical group that combines nested filters with an `AND` or `OR` operator. Groups may themselves contain further groups.",
+              "properties": {
+                "filters": {
+                  "items": {
+                    "$ref": "#/$defs/DocumentFilter"
+                  },
+                  "type": "array"
+                },
+                "operator": {
+                  "enum": [
+                    "AND",
+                    "OR"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "operator",
+                "filters"
+              ],
+              "type": "object"
+            }
+          ]
+        },
+        "Pagination": {
+          "properties": {
+            "limit": {
+              "type": "number"
+            },
+            "offset": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "collectionId": {
+          "deprecated": true,
+          "description": "Filter to a specific collection. Deprecated – prefer the `filters` parameter.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "dateFilter": {
+          "deprecated": true,
+          "description": "Any documents that have not been updated within the specified period will be filtered out. Deprecated – prefer the `filters` parameter with a date field and an ISO 8601 duration value.",
+          "enum": [
+            "day",
+            "week",
+            "month",
+            "year"
+          ],
+          "type": "string"
+        },
+        "direction": {
+          "description": "Specifies the sort order with respect to sort field",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "type": "string"
+        },
+        "documentId": {
+          "deprecated": true,
+          "description": "Filter results based on content within a document and its children. Deprecated – prefer the `filters` parameter.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "filters": {
+          "description": "Structured filter expression, evaluated as an AND of top-level entries. Cannot be combined with the deprecated `collectionId`, `userId`, `documentId`, `dateFilter` or `statusFilter` parameters.",
+          "items": {
+            "$ref": "#/$defs/DocumentFilter"
+          },
+          "type": "array"
+        },
+        "limit": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "query": {
+          "description": "Search query to match against document titles",
+          "type": "string"
+        },
+        "shareId": {
+          "description": "Filter results for the collection or document referenced by the shareId",
+          "type": "string"
+        },
+        "sort": {
+          "description": "Specifies the attributes by which search results will be sorted",
+          "enum": [
+            "relevance",
+            "createdAt",
+            "updatedAt",
+            "title"
+          ],
+          "type": "string"
+        },
+        "statusFilter": {
+          "deprecated": true,
+          "description": "Document statuses to include in results. Deprecated – prefer the `filters` parameter.",
+          "items": {
+            "enum": [
+              "draft",
+              "archived",
+              "published"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "userId": {
+          "deprecated": true,
+          "description": "Filter results based on user. Deprecated – prefer the `filters` parameter.",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_templatize",
+    "endpoint": "documents.templatize",
+    "category": "Documents",
+    "description": "Create a template from a document. This method allows you to create a new template using an existing document as the basis",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "collectionId": {
+          "anyOf": [
+            {
+              "description": "Identifier for the collection where the template should be created",
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "publish": {
+          "description": "Whether the new template should be published",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "publish"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_unpublish",
+    "endpoint": "documents.unpublish",
+    "category": "Documents",
+    "description": "Unpublish a document. Unpublishing a document moves it back to a draft status and out of the collection.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "detach": {
+          "default": false,
+          "description": "Whether to detach the document from the collection",
+          "type": "boolean"
+        },
+        "id": {
+          "description": "Unique identifier for the document. Either the UUID or the urlId is acceptable.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_update",
+    "endpoint": "documents.update",
+    "category": "Documents",
+    "description": "Update a document. This method allows you to modify an already created document",
+    "readOnly": false,
+    "schema": {
+      "$defs": {
+        "TextEditMode": {
+          "description": "The editing mode for text updates to a document. When set to `patch`, the `findText` parameter is required and the existing occurrence of `findText` will be replaced with the value of `text`.",
+          "enum": [
+            "append",
+            "prepend",
+            "replace",
+            "patch"
+          ],
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "collectionId": {
+          "anyOf": [
+            {
+              "description": "Identifier for the collection to move the document to",
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "color": {
+          "anyOf": [
+            {
+              "description": "Color for the document icon (hex format)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "dataAttributes": {
+          "anyOf": [
+            {
+              "description": "Data attributes to be updated. Attributes not included will be removed from the document.",
+              "items": {
+                "properties": {
+                  "dataAttributeId": {
+                    "description": "Unique identifier for the data attribute.",
+                    "format": "uuid",
+                    "type": "string"
+                  },
+                  "value": {
+                    "description": "The value of the data attribute. Can be a string, boolean, or number depending on the data attribute type.",
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "number"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "dataAttributeId",
+                  "value"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "deprecatedReason": {
+          "anyOf": [
+            {
+              "description": "The reason the document was archived or deleted. Can only be updated on an archived or deleted document.",
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "editMode": {
+          "$ref": "#/$defs/TextEditMode"
+        },
+        "findText": {
+          "description": "The text to find within the document when using `patch` editMode. This text will be replaced with the value of `text`. Required when `editMode` is `patch`.",
+          "type": "string"
+        },
+        "fullWidth": {
+          "description": "Whether the document should be displayed in full width",
+          "type": "boolean"
+        },
+        "icon": {
+          "anyOf": [
+            {
+              "description": "Icon displayed alongside the document title",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "description": "Unique identifier for the document. Either the UUID or the urlId is acceptable.",
+          "type": "string"
+        },
+        "insightsEnabled": {
+          "description": "Whether insights should be visible on the document",
+          "type": "boolean"
+        },
+        "lastRevision": {
+          "description": "If set, the update is rejected with a 409 response when the document's current revision number does not match this value. Use this for optimistic concurrency control to avoid overwriting changes made since the client last loaded the document.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "preferences": {
+          "anyOf": [
+            {
+              "description": "Document-level display preferences. Only the fields supplied are updated; existing values for other preferences are preserved. Pass `null` to clear all preferences.",
+              "properties": {
+                "headingPrefix": {
+                  "description": "Numbering style applied to the document's headings when rendered.",
+                  "enum": [
+                    "none",
+                    "numeric",
+                    "alphanumeric",
+                    "outline"
+                  ],
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "publish": {
+          "description": "Whether this document should be published and made visible to other workspace members, if a draft",
+          "type": "boolean"
+        },
+        "templateId": {
+          "anyOf": [
+            {
+              "description": "Identifier for the template this document is based on",
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "text": {
+          "description": "The body of the document in markdown.",
+          "maxLength": 1536000,
+          "type": "string"
+        },
+        "title": {
+          "description": "The title of the document.",
+          "maxLength": 100,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_users",
+    "endpoint": "documents.users",
+    "category": "Documents",
+    "description": "List document users. All users with access to a document. To list only users with direct membership to the document use `documents.memberships`",
+    "readOnly": true,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the document. Either the UUID or the urlId is acceptable.",
+          "type": "string"
+        },
+        "query": {
+          "description": "If set, will filter the results by user name.",
+          "type": "string"
+        },
+        "userId": {
+          "description": "If set, will filter the results to a specific user.",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_documents_viewed",
+    "endpoint": "documents.viewed",
+    "category": "Documents",
+    "description": "List all recently viewed documents. This method will list all documents recently viewed by the current user.",
+    "readOnly": true,
+    "schema": {
+      "$defs": {
+        "Pagination": {
+          "properties": {
+            "limit": {
+              "type": "number"
+            },
+            "offset": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "direction": {
+          "default": "DESC",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "type": "string"
+        },
+        "limit": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "sort": {
+          "default": "updatedAt",
+          "description": "The field to sort by. Note that sorting is by a column of the view record, not the document itself.",
+          "enum": [
+            "updatedAt",
+            "createdAt"
+          ],
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_pins_create",
+    "endpoint": "pins.create",
+    "category": "Pins",
+    "description": "Pin a document. Pin a document to the top of a collection or to the home screen. Pinned documents are visible to all members of the workspace. Provide a `collectionId` to pin within a collection, or omit it to pin to the home screen.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "collectionId": {
+          "anyOf": [
+            {
+              "description": "Identifier for the collection to pin the document to. Omit to pin to the home screen.",
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "documentId": {
+          "description": "Identifier for the document to pin.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "index": {
+          "description": "An optional fractional index to control the position of the pin.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "documentId"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_pins_delete",
+    "endpoint": "pins.delete",
+    "category": "Pins",
+    "description": "Delete a pin. Remove a pin, un-pinning the document from its collection or the home screen. The document itself is not affected.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the pin.",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_pins_info",
+    "endpoint": "pins.info",
+    "category": "Pins",
+    "description": "Retrieve a pin. Retrieve the pin for a document, either within a collection or on the home screen.",
+    "readOnly": true,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "collectionId": {
+          "anyOf": [
+            {
+              "description": "Identifier for the collection. Omit to retrieve the home screen pin.",
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "documentId": {
+          "description": "Identifier for the pinned document.",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "documentId"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_pins_list",
+    "endpoint": "pins.list",
+    "category": "Pins",
+    "description": "List pins. List the pinned documents for a collection, or for the home screen when no `collectionId` is provided.",
+    "readOnly": true,
+    "schema": {
+      "$defs": {
+        "Pagination": {
+          "properties": {
+            "limit": {
+              "type": "number"
+            },
+            "offset": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "collectionId": {
+          "anyOf": [
+            {
+              "description": "The collection to list pins for. Omit to list home screen pins.",
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "limit": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_pins_update",
+    "endpoint": "pins.update",
+    "category": "Pins",
+    "description": "Update a pin. Update the position of an existing pin, used to reorder pinned documents.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the pin.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "index": {
+          "description": "The fractional index to move the pin to.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "index"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_reactions_list",
+    "endpoint": "reactions.list",
+    "category": "Reactions",
+    "description": "List reactions. List the emoji reactions that have been added to a comment.",
+    "readOnly": true,
+    "schema": {
+      "$defs": {
+        "Pagination": {
+          "properties": {
+            "limit": {
+              "type": "number"
+            },
+            "offset": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "commentId": {
+          "description": "Identifier for the comment to list reactions for.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "limit": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "commentId"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_revisions_delete",
+    "endpoint": "revisions.delete",
+    "category": "Revisions",
+    "description": "Delete a revision. Delete a specific revision of a document. The latest revision of a document cannot be deleted.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the revision.",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_revisions_info",
+    "endpoint": "revisions.info",
+    "category": "Revisions",
+    "description": "Retrieve a revision. A revision is a snapshot of a document at a specific point in time. This endpoint allows you to retrieve a specific version of a document by its unique identifier.",
+    "readOnly": true,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the revision.",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_revisions_list",
+    "endpoint": "revisions.list",
+    "category": "Revisions",
+    "description": "List all revisions. List all revisions for a specific document. Revisions represent historical snapshots of a document's content and can be used to track changes over time. The `data` and `text` fields are omitted from listed revisions for performance; use `revisions.info` to retrieve the full content of a specific revision.",
+    "readOnly": true,
+    "schema": {
+      "$defs": {
+        "Pagination": {
+          "properties": {
+            "limit": {
+              "type": "number"
+            },
+            "offset": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
+        "Sorting": {
+          "properties": {
+            "direction": {
+              "enum": [
+                "ASC",
+                "DESC"
+              ],
+              "type": "string"
+            },
+            "sort": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "direction": {
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "type": "string"
+        },
+        "documentId": {
+          "description": "The document ID to retrieve revisions for",
+          "format": "uuid",
+          "type": "string"
+        },
+        "limit": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "sort": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_revisions_update",
+    "endpoint": "revisions.update",
+    "category": "Revisions",
+    "description": "Update a revision. Update the details of a revision. Currently only the name of the revision can be changed, which is used to label significant versions of a document.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the revision.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "description": "The name of the revision, or `null` to remove an existing name.",
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_templates_create",
+    "endpoint": "templates.create",
+    "category": "Templates",
+    "description": "Create a template. Create a new template that can be used as a starting point for new documents. Templates can optionally be scoped to a specific collection.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "collectionId": {
+          "description": "Identifier for the collection to which the template belongs.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "description": "The color of the template icon in hex format.",
+              "pattern": "^#[0-9A-Fa-f]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "description": "The body of the template as a Prosemirror document. Required when publishing.",
+          "type": "object"
+        },
+        "icon": {
+          "anyOf": [
+            {
+              "description": "An emoji to use as the template icon.",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "description": "Optionally provide a specific UUID for the template.",
+          "format": "uuid",
+          "type": "string"
+        },
+        "publish": {
+          "default": true,
+          "description": "Whether the template is available to other members. Set to false to create a draft that is only visible to its creator.",
+          "type": "boolean"
+        },
+        "title": {
+          "description": "The title of the template. Required when publishing.",
+          "maxLength": 255,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_templates_delete",
+    "endpoint": "templates.delete",
+    "category": "Templates",
+    "description": "Delete a template. Delete a template by its unique identifier. This will soft-delete the template, it can be restored later.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the template. Either the UUID or the urlId is acceptable.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_templates_duplicate",
+    "endpoint": "templates.duplicate",
+    "category": "Templates",
+    "description": "Duplicate a template. Create a copy of an existing template. Optionally override the title and target collection.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "collectionId": {
+          "anyOf": [
+            {
+              "description": "Identifier for the collection to place the duplicated template in. If not provided, uses the original template's collection.",
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "description": "Unique identifier for the template to duplicate. Either the UUID or the urlId is acceptable.",
+          "type": "string"
+        },
+        "title": {
+          "description": "Override the title of the duplicated template.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_templates_info",
+    "endpoint": "templates.info",
+    "category": "Templates",
+    "description": "Retrieve a template. Retrieve a template by its unique identifier.",
+    "readOnly": true,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the template. Either the UUID or the urlId is acceptable.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_templates_list",
+    "endpoint": "templates.list",
+    "category": "Templates",
+    "description": "List all templates. List all templates available to the current user. Optionally filter by collection. Templates not associated with a collection are workspace-wide.",
+    "readOnly": true,
+    "schema": {
+      "$defs": {
+        "Pagination": {
+          "properties": {
+            "limit": {
+              "type": "number"
+            },
+            "offset": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
+        "Sorting": {
+          "properties": {
+            "direction": {
+              "enum": [
+                "ASC",
+                "DESC"
+              ],
+              "type": "string"
+            },
+            "sort": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "collectionId": {
+          "description": "Optionally filter to a specific collection",
+          "format": "uuid",
+          "type": "string"
+        },
+        "direction": {
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "type": "string"
+        },
+        "limit": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "query": {
+          "description": "Search query to filter templates by title",
+          "type": "string"
+        },
+        "sort": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_templates_restore",
+    "endpoint": "templates.restore",
+    "category": "Templates",
+    "description": "Restore a template. Restore a previously deleted template by its unique identifier.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the template. Either the UUID or the urlId is acceptable.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "outline_templates_update",
+    "endpoint": "templates.update",
+    "category": "Templates",
+    "description": "Update a template. Update an existing template by its unique identifier.",
+    "readOnly": false,
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "collectionId": {
+          "anyOf": [
+            {
+              "description": "Identifier for the collection to which the template belongs. Set to null for a workspace-wide template.",
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "color": {
+          "anyOf": [
+            {
+              "description": "The color of the template icon in hex format.",
+              "pattern": "^#[0-9A-Fa-f]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "description": "The body of the template as a Prosemirror document.",
+          "type": "object"
+        },
+        "fullWidth": {
+          "description": "Whether the template should be displayed full width.",
+          "type": "boolean"
+        },
+        "icon": {
+          "anyOf": [
+            {
+              "description": "An emoji to use as the template icon.",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "description": "Unique identifier for the template. Either the UUID or the urlId is acceptable.",
+          "type": "string"
+        },
+        "publish": {
+          "description": "Set to true to publish a draft template so it becomes available to other members.",
+          "type": "boolean"
+        },
+        "title": {
+          "description": "The title of the template.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    }
+  }
+]

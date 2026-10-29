@@ -1,0 +1,75 @@
+name: Draft release
+
+on:
+  push:
+    tags: ['v*', '[0-9]*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate-tag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      version: ${{ steps.tag.outputs.version }}
+    steps:
+      - name: Require a version tag
+        id: tag
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          TAG: ${{ github.ref_name }}
+        shell: bash
+        run: |
+          if [[ "$REF_TYPE" != tag || ! "$TAG" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo 'Run this workflow on a tag such as 1.0.0 or v1.1.0-rc.1.' >&2
+            exit 1
+          fi
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+
+  test-build:
+    needs: validate-tag
+    uses: ./.github/workflows/ci.yml
+    with:
+      version: ${{ needs.validate-tag.outputs.version }}
+
+  draft:
+    needs: [validate-tag, test-build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+          cache: true
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: outline-mcp-*
+          path: bin
+          merge-multiple: true
+      - name: Prepare notices, provenance, and SHA-256 manifest
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          go mod download
+          go run ./scripts/notices > bin/THIRD_PARTY_NOTICES.txt
+          cp LICENSE bin/LICENSE
+          jq -n --arg tag "$RELEASE_TAG" --arg commit "$(git rev-parse HEAD)" --arg repository "$GITHUB_REPOSITORY" '{tag:$tag,commit:$commit,repository:$repository}' > bin/build-info.json
+          go run ./scripts/checksums bin/outline-mcp-linux-amd64 bin/outline-mcp-windows-amd64.exe bin/LICENSE bin/THIRD_PARTY_NOTICES.txt bin/build-info.json > bin/SHA256SUMS
+          (cd bin && sha256sum --check SHA256SUMS)
+      - name: Create or update draft and verify uploaded bytes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: bash scripts/draft-release.sh

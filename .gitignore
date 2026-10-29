@@ -1,0 +1,14 @@
+/bin/
+/work/
+*.test
+coverage.out
+.env
+.env.*
+!.env.example
+/config.json
+/history/
+*.bak-*
+/.agents/
+/.codex/
+.DS_Store
+Thumbs.db
